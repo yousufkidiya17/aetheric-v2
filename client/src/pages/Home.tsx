@@ -16,6 +16,7 @@ import {
   X,
 } from 'lucide-react';
 import { useLocation } from 'wouter';
+import ParticleBackground from '../components/ParticleBackground';
 
 // --- Holographic Sphere Component ---
 const HolographicSphere = () => {
@@ -220,6 +221,7 @@ const AethericDashboard = () => {
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col h-full overflow-hidden relative">
+        <ParticleBackground />
         <header className="flex items-center justify-between px-4 md:px-6 py-4">
           <div className="flex items-center gap-3">
             {/* Hamburger for mobile */}

@@ -203,6 +203,16 @@ const AethericDashboard = () => {
         .chat-scroll::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 4px; }
         .chat-scroll::-webkit-scrollbar-thumb:hover { background: #3a3a3a; }
         * { scrollbar-width: thin; scrollbar-color: #2a2a2a #0a0a0a; }
+
+        /* ✨ AI Reply Glow Effect — remove this block to disable */
+        @keyframes ai-glow {
+          0% { box-shadow: 0 0 8px rgba(99,102,241,0.6), 0 0 20px rgba(99,102,241,0.3); border-color: rgba(99,102,241,0.5); }
+          40% { box-shadow: 0 0 15px rgba(99,102,241,0.4), 0 0 30px rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.3); }
+          100% { box-shadow: 0 0 0px transparent; border-color: #2a2a2a; }
+        }
+        .ai-reply-glow {
+          animation: ai-glow 2s ease-out forwards;
+        }
       `}</style>
 
       {/* Mobile Overlay */}
@@ -252,7 +262,7 @@ const AethericDashboard = () => {
           ) : (
             <div className="w-full max-w-3xl flex-1 overflow-y-auto mb-4 space-y-4 pt-4 flex flex-col chat-scroll">
               {messages.map((m, i) => (
-                <div key={i} className={`p-4 rounded-2xl max-w-[85%] whitespace-pre-wrap ${m.role === 'user' ? 'bg-[#2a2a2a] text-white self-end' : 'bg-transparent border border-[#2a2a2a] text-gray-300 self-start leading-relaxed'}`}>
+                <div key={i} className={`p-4 rounded-2xl max-w-[85%] whitespace-pre-wrap ${m.role === 'user' ? 'bg-[#2a2a2a] text-white self-end' : 'bg-transparent border border-[#2a2a2a] text-gray-300 self-start leading-relaxed ai-reply-glow'}`}>
                   {m.content}
                 </div>
               ))}

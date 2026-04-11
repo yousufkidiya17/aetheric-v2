@@ -188,20 +188,22 @@ function callMCP(intent: string, tool: string, params: any) {
 
 const conversations = new Map<string, { role: string; content: string }[]>();
 
-const SYSTEM_PROMPT = `You are Aetheric, a premium AI assistant for a service marketplace. You help users:
+const SYSTEM_PROMPT = `You are Aetheric, a premium AI assistant for an Indian service marketplace. You help users:
 1. **Order Food** — Search restaurants, browse menus, place orders
 2. **Book Rides** — Estimate fares, book cabs/autos/bikes
 3. **Hire Workers** — Find electricians, plumbers, tutors, carpenters
 
-IMPORTANT RULES:
-- Analyze the user's message and determine which service they need
-- Return a structured JSON response with the detected intent and action
-- Be conversational and helpful
-- Use Indian Rupees (₹) for all currency
+LANGUAGE & STYLE RULES (VERY IMPORTANT):
+- **Mirror the user's language exactly.** If they speak Hinglish (Hindi+English mix), reply in Hinglish. If pure Hindi, reply in Hindi. If English, reply in English. Match their exact tone, slang, and vibe.
+- **Default/preferred language is Hinglish** — casual, friendly, desi style. Example: "Bhai, tere liye best restaurants dhundh raha hoon! 🍕"
+- Use emojis naturally to keep it fun and engaging
+- Be warm, friendly, and talk like a smart desi friend — not a corporate bot
+- Use Indian Rupees (₹) for all prices
+- Keep responses concise but helpful
 
 RESPONSE FORMAT (always return valid JSON):
 {
-  "reply": "Your conversational response",
+  "reply": "Your conversational response in the user's language style",
   "intent": "food" | "rides" | "workers" | "general" | "clarify",
   "action": { "tool": "the MCP tool to call", "params": { "key": "value" } },
   "suggestions": ["suggestion 1", "suggestion 2"]
@@ -227,10 +229,10 @@ async function callMistral(messages: { role: string; content: string }[]) {
 
 function getFallbackResponse(message: string) {
   const msg = message.toLowerCase();
-  if (msg.includes("food") || msg.includes("hungry")) return { reply: "I'd love to help you with food! 🍕 What cuisine?", intent: "food", suggestions: ["Show nearby restaurants"] };
-  if (msg.includes("ride") || msg.includes("cab")) return { reply: "Let me help you get a ride! 🚕 Where to?", intent: "rides", suggestions: ["Book a ride to airport"] };
-  if (msg.includes("plumber") || msg.includes("worker") || msg.includes("electrician")) return { reply: "I'll find the right professional! 🔧 What service?", intent: "workers", suggestions: ["Find a plumber"] };
-  return { reply: "Hello! I'm Aetheric, your AI assistant. I can help order food, book rides, or hire workers.", intent: "general", suggestions: ["I'm hungry", "Book a ride", "Need a plumber"] };
+  if (msg.includes("food") || msg.includes("hungry") || msg.includes("bhook") || msg.includes("khana")) return { reply: "Bhai bhook lagi hai? 🍕 Bata kya khayega, abhi best restaurants dhundh ke deta hoon!", intent: "food", suggestions: ["Nearby restaurants dikhao", "Pizza manga do"] };
+  if (msg.includes("ride") || msg.includes("cab") || msg.includes("gaadi") || msg.includes("auto")) return { reply: "Chal bhai, ride book karte hain! 🚕 Kahan jaana hai bata?", intent: "rides", suggestions: ["Airport jaana hai", "Auto book karo"] };
+  if (msg.includes("plumber") || msg.includes("worker") || msg.includes("electrician") || msg.includes("kaam")) return { reply: "Sahi hai bhai! 🔧 Kaunsa kaam karwana hai? Plumber, electrician, carpenter — sab milega!", intent: "workers", suggestions: ["Plumber chahiye", "Electrician dhundho"] };
+  return { reply: "Hey bhai! Main hoon Aetheric 🌟 Tera apna AI assistant! Food order karna ho, ride book karni ho, ya koi worker chahiye — bas bol de!", intent: "general", suggestions: ["Bhook lagi hai", "Ride book karo", "Plumber chahiye"] };
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

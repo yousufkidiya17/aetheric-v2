@@ -206,12 +206,11 @@ const AethericDashboard = () => {
 
         /* ✨ AI Reply Glow Effect — remove this block to disable */
         @keyframes ai-glow {
-          0% { box-shadow: 0 0 8px rgba(99,102,241,0.6), 0 0 20px rgba(99,102,241,0.3); border-color: rgba(99,102,241,0.5); }
-          40% { box-shadow: 0 0 15px rgba(99,102,241,0.4), 0 0 30px rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.3); }
-          100% { box-shadow: 0 0 0px transparent; border-color: #2a2a2a; }
+          0%, 100% { box-shadow: 0 0 4px rgba(99,102,241,0.2), 0 0 10px rgba(99,102,241,0.1); border-color: #2a2a2a; }
+          50% { box-shadow: 0 0 12px rgba(99,102,241,0.5), 0 0 25px rgba(99,102,241,0.2); border-color: rgba(99,102,241,0.4); }
         }
         .ai-reply-glow {
-          animation: ai-glow 2s ease-out forwards;
+          animation: ai-glow 2.5s ease-in-out infinite;
         }
       `}</style>
 

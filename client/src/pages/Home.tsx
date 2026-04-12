@@ -23,12 +23,18 @@ import AethericLogo from '../components/AethericLogo';
 const HolographicSphere = () => {
   return (
     <div className="relative">
-      <div className="absolute inset-0 rounded-full blur-3xl opacity-60 scale-110"
+      {/* Outer white blinking glow */}
+      <div className="absolute inset-0 rounded-full animate-sphere-glow"
         style={{
-          background: 'linear-gradient(135deg, rgba(255,182,255,0.4) 0%, rgba(182,240,255,0.4) 50%, rgba(200,180,255,0.4) 100%)',
+          boxShadow: '0 0 40px rgba(255,255,255,0.3), 0 0 80px rgba(255,255,255,0.15)',
         }}
       />
-      <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden"
+      <div className="absolute inset-0 rounded-full blur-3xl opacity-60 scale-110"
+        style={{
+          background: 'radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 50%, transparent 100%)',
+        }}
+      />
+      <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border border-white/20 animate-sphere-border"
         style={{
           boxShadow: '0 0 60px rgba(255,255,255,0.3), inset 0 0 40px rgba(255,255,255,0.2)',
         }}
@@ -60,6 +66,18 @@ const HolographicSphere = () => {
         .animate-flow-slow { animation: flow-slow 8s ease-in-out infinite; }
         .animate-flow-medium { animation: flow-medium 6s ease-in-out infinite; }
         .animate-flow-fast { animation: flow-fast 4s ease-in-out infinite; }
+
+        @keyframes sphere-glow {
+          0%, 100% { opacity: 0.4; transform: scale(1); }
+          50% { opacity: 0.9; transform: scale(1.03); }
+        }
+        .animate-sphere-glow { animation: sphere-glow 2.5s ease-in-out infinite; }
+
+        @keyframes sphere-border {
+          0%, 100% { border-color: rgba(255,255,255,0.15); box-shadow: 0 0 30px rgba(255,255,255,0.15), inset 0 0 30px rgba(255,255,255,0.1); }
+          50% { border-color: rgba(255,255,255,0.5); box-shadow: 0 0 60px rgba(255,255,255,0.4), inset 0 0 40px rgba(255,255,255,0.2); }
+        }
+        .animate-sphere-border { animation: sphere-border 2.5s ease-in-out infinite; }
       `}</style>
     </div>
   );

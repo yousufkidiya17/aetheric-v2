@@ -240,6 +240,7 @@ const AethericDashboard = () => {
               <Menu className="w-5 h-5" />
             </button>
             <button className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm font-medium text-gray-300">
+              <AethericLogo className="w-5 h-5 flex-shrink-0" />
               <span>Aetheric AI</span>
               <ChevronDown className="w-4 h-4 text-gray-500" />
             </button>

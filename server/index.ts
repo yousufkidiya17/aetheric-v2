@@ -222,37 +222,45 @@ async function searchHandler(tool: string, params: any) {
       const query = params.query || params.q || "";
       if (!query) return { success: false, error: "Search query is required" };
       try {
-        const res = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`);
-        const data = await res.json() as any;
-
+        // Strategy 1: DuckDuckGo Instant Answer API
+        const ddgRes = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`);
+        const ddg = await ddgRes.json() as any;
         const results: any[] = [];
 
-        // Abstract (main answer)
-        if (data.Abstract) {
-          results.push({ type: "answer", title: data.Heading || query, text: data.Abstract, source: data.AbstractSource, url: data.AbstractURL });
+        if (ddg.Abstract) {
+          results.push({ title: ddg.Heading || query, snippet: ddg.Abstract, source: ddg.AbstractSource, url: ddg.AbstractURL });
         }
-
-        // Related topics
-        if (data.RelatedTopics && data.RelatedTopics.length > 0) {
-          data.RelatedTopics.slice(0, 5).forEach((topic: any) => {
-            if (topic.Text) {
-              results.push({ type: "related", text: topic.Text, url: topic.FirstURL || "" });
-            }
+        if (ddg.Answer) {
+          results.push({ title: "Quick Answer", snippet: ddg.Answer, source: "DuckDuckGo", url: "" });
+        }
+        if (ddg.Definition) {
+          results.push({ title: "Definition", snippet: ddg.Definition, source: ddg.DefinitionSource, url: ddg.DefinitionURL });
+        }
+        if (ddg.RelatedTopics) {
+          ddg.RelatedTopics.slice(0, 6).forEach((t: any) => {
+            if (t.Text) results.push({ title: t.Text.split(" - ")[0] || "", snippet: t.Text, url: t.FirstURL || "" });
+            if (t.Topics) t.Topics.slice(0, 3).forEach((sub: any) => {
+              if (sub.Text) results.push({ title: sub.Text.split(" - ")[0] || "", snippet: sub.Text, url: sub.FirstURL || "" });
+            });
           });
         }
 
-        // Infobox
-        if (data.Infobox && data.Infobox.content) {
-          const info: Record<string, string> = {};
-          data.Infobox.content.slice(0, 5).forEach((item: any) => { if (item.label && item.value) info[item.label] = String(item.value); });
-          if (Object.keys(info).length > 0) results.push({ type: "infobox", data: info });
+        // Strategy 2: If DDG returns nothing, try Wikipedia
+        if (results.length === 0) {
+          const wikiRes = await fetch(`https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=5&format=json`);
+          const wiki = await wikiRes.json() as any;
+          if (wiki[1] && wiki[1].length > 0) {
+            wiki[1].forEach((title: string, i: number) => {
+              results.push({ title, snippet: wiki[2]?.[i] || title, url: wiki[3]?.[i] || "", source: "Wikipedia" });
+            });
+          }
         }
 
         if (results.length === 0) {
-          return { success: true, query, message: "No instant answer found, but the query was noted.", results: [{ type: "tip", text: `Try searching "${query}" on Google for more results.` }] };
+          return { success: true, query, message: `No results found for "${query}". Try a different search term.`, results: [] };
         }
 
-        return { success: true, query, resultCount: results.length, results };
+        return { success: true, query, resultCount: results.length, results: results.slice(0, 8) };
       } catch (e: any) {
         return { success: false, error: `Search failed: ${e.message}` };
       }

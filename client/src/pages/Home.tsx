@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useLocation } from 'wouter';
 import ParticleBackground from '../components/ParticleBackground';
+import AethericLogo from '../components/AethericLogo';
 
 // --- Holographic Sphere Component ---
 const HolographicSphere = () => {
@@ -129,9 +130,7 @@ const AethericDashboard = () => {
     <>
       <div className="px-5 py-5 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center">
-            <span className="text-white font-bold text-lg">A</span>
-          </div>
+          <AethericLogo className="w-9 h-9" />
           <span className="text-xl font-semibold tracking-tight">Aetheric</span>
         </div>
         {/* Close button on mobile */}

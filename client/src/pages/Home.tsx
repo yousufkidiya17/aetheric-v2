@@ -74,7 +74,37 @@ const AethericDashboard = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<any>(null);
+
+  // --- Voice Input (Web Speech API) ---
+  const toggleVoice = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) { alert('Voice input not supported in this browser. Use Chrome or Edge.'); return; }
+
+    if (isListening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'hi-IN'; // Hindi + English mixed
+    recognition.interimResults = true;
+    recognition.continuous = false;
+    recognitionRef.current = recognition;
+
+    recognition.onresult = (event: any) => {
+      const transcript = Array.from(event.results).map((r: any) => r[0].transcript).join('');
+      setMessageInput(transcript);
+    };
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => setIsListening(false);
+
+    recognition.start();
+    setIsListening(true);
+  };
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -309,7 +339,9 @@ const AethericDashboard = () => {
                   </button>
                 </div>
                 <div className="flex gap-3 items-center">
-                  <Mic className="w-4 h-4 text-gray-500 cursor-pointer hover:text-white transition-colors" />
+                  <button onClick={toggleVoice} className={`p-1 rounded-md transition-all ${isListening ? 'text-white animate-pulse bg-white/10' : 'text-gray-500 hover:text-white'}`}>
+                    <Mic className="w-4 h-4" />
+                  </button>
                   <button
                     onClick={() => handleSend()}
                     disabled={!messageInput.trim() || isLoading}

@@ -136,6 +136,35 @@ const AethericDashboard = () => {
     }
   };
 
+  // --- Direct Web Search (bypasses Mistral) ---
+  const handleWebSearch = async (query: string) => {
+    if (!query || isLoading) return;
+    setMessageInput('');
+    setMessages(prev => [...prev, { role: 'user', content: `🔍 Web Search: ${query}` }]);
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query })
+      });
+      const data = await res.json();
+      if (data.success && data.results && data.results.length > 0) {
+        const formatted = data.results.map((r: any) =>
+          `**${r.title || ''}**\n${r.snippet || r.text || ''}${r.url ? `\n🔗 ${r.url}` : ''}`
+        ).join('\n\n---\n\n');
+        setMessages(prev => [...prev, { role: 'assistant', content: `🔍 Search results for "${query}":\n\n${formatted}` }]);
+      } else {
+        setMessages(prev => [...prev, { role: 'assistant', content: `"${query}" ke liye koi results nahi mile bhai. Kuch aur try kar! 🔍` }]);
+      }
+    } catch (e) {
+      console.error(e);
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Search failed bhai, connection issue lag raha hai. Try again!' }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const navItems = [
     { name: 'Home', icon: HomeIcon },
     { name: 'Templates', icon: LayoutGrid },
@@ -336,9 +365,9 @@ const AethericDashboard = () => {
                     onClick={() => {
                       const q = messageInput.trim();
                       if (q) {
-                        handleSend(`Web search: ${q}`);
+                        handleWebSearch(q);
                       } else {
-                        setMessageInput('Search the web for ');
+                        setMessageInput('');
                       }
                     }}
                     className="flex items-center gap-2 px-3 py-1.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-xs text-gray-400 hover:text-white hover:border-white/30 transition-colors active:scale-95"

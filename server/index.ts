@@ -419,6 +419,19 @@ async function startServer() {
   app.use(express.static(staticPath));
   app.use(express.json());
 
+  // ━━━ Direct Web Search (bypasses Mistral) ━━━
+  app.post("/api/search", async (req, res) => {
+    const { query } = req.body;
+    if (!query) return res.status(400).json({ error: "Query is required" });
+    try {
+      console.log(`[Search] Direct search: "${query}"`);
+      const result = await searchHandler("web_search", { query });
+      res.json(result);
+    } catch (e: any) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
   // ━━━ Direct Test Endpoints (for debugging MCP services) ━━━
   app.get("/api/test/weather/:city", async (req, res) => {
     try { res.json(await weatherHandler("get_weather", { city: req.params.city })); }

@@ -365,10 +365,12 @@ IMPORTANT: When the user mentions weather/mausam/temperature, ALWAYS use intent 
 `;
 
 async function callMistral(messages: { role: string; content: string }[]) {
+  const dynamicPrompt = `${SYSTEM_PROMPT}\n\nCURRENT DATE & TIME: ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}`;
+  
   const response = await fetch(CONFIG.MISTRAL_API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${CONFIG.MISTRAL_API_KEY}` },
-    body: JSON.stringify({ model: CONFIG.MISTRAL_MODEL, messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages], temperature: 0.7, max_tokens: 1024, response_format: { type: "json_object" } })
+    body: JSON.stringify({ model: CONFIG.MISTRAL_MODEL, messages: [{ role: "system", content: dynamicPrompt }, ...messages], temperature: 0.7, max_tokens: 1024, response_format: { type: "json_object" } })
   });
   if (!response.ok) throw new Error(`Mistral API error: ${response.status}`);
   const data = await response.json() as any;

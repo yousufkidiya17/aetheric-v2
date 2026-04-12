@@ -243,6 +243,15 @@ const AethericDashboard = () => {
         .ai-reply-glow {
           animation: ai-glow 2.5s ease-in-out infinite;
         }
+
+        /* ✨ Subtle border breathing for chat elements */
+        @keyframes border-breathe {
+          0%, 100% { border-color: #2a2a2a; }
+          50% { border-color: rgba(255,255,255,0.2); }
+        }
+        .border-breathe {
+          animation: border-breathe 3s ease-in-out infinite;
+        }
       `}</style>
 
       {/* Mobile Overlay */}
@@ -265,7 +274,7 @@ const AethericDashboard = () => {
         <header className="flex items-center justify-between px-4 md:px-6 py-4">
           <div className="flex items-center gap-3">
             {/* Hamburger for mobile */}
-            <button onClick={() => setSidebarOpen(true)} className="md:hidden text-gray-400 hover:text-white">
+            <button onClick={() => setSidebarOpen(true)} className="md:hidden p-2 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] text-gray-300 hover:text-white hover:border-white/20 transition-all">
               <Menu className="w-5 h-5" />
             </button>
             <button className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm font-medium text-gray-300">
@@ -293,7 +302,7 @@ const AethericDashboard = () => {
           ) : (
             <div className="w-full max-w-3xl flex-1 overflow-y-auto mb-4 space-y-4 pt-4 flex flex-col chat-scroll">
               {messages.map((m, i) => (
-                <div key={i} className={`p-4 rounded-2xl max-w-[85%] whitespace-pre-wrap ${m.role === 'user' ? 'bg-[#2a2a2a] text-white self-end' : 'bg-transparent border border-[#2a2a2a] text-gray-300 self-start leading-relaxed ai-reply-glow'}`}>
+                <div key={i} className={`p-4 rounded-2xl max-w-[85%] whitespace-pre-wrap ${m.role === 'user' ? 'bg-[#2a2a2a] text-white self-end border border-[#3a3a3a] border-breathe' : 'bg-transparent border border-[#2a2a2a] text-gray-300 self-start leading-relaxed ai-reply-glow'}`}>
                   {m.content}
                 </div>
               ))}
@@ -304,7 +313,7 @@ const AethericDashboard = () => {
 
           {/* Input Box */}
           <div className="w-full max-w-3xl mb-4">
-            <div className="bg-[#111111] border border-[#2a2a2a] rounded-2xl p-4">
+            <div className="bg-[#111111] border border-[#2a2a2a] rounded-2xl p-4 border-breathe">
               <div className="flex items-start gap-3 mb-4">
                 <Paperclip className="w-5 h-5 text-gray-500 mt-2 cursor-pointer hover:text-white transition-colors" />
                 <textarea
@@ -361,7 +370,7 @@ const AethericDashboard = () => {
                 <button
                   key={i}
                   onClick={() => handleSend(card.prompt)}
-                  className="bg-[#111111] border border-[#2a2a2a] rounded-xl p-4 hover:border-white/20 hover:bg-white/5 transition-all cursor-pointer hover:scale-[1.02] text-left"
+                  className="bg-[#111111] border border-[#2a2a2a] rounded-xl p-4 hover:border-white/20 hover:bg-white/5 transition-all cursor-pointer hover:scale-[1.02] text-left border-breathe"
                 >
                   <h3 className="text-sm font-medium text-gray-200 mb-1">{card.title}</h3>
                   <p className="text-xs text-gray-500">{card.description}</p>

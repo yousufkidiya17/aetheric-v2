@@ -293,7 +293,17 @@ const AethericDashboard = () => {
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex gap-2">
-                  <button className="flex items-center gap-2 px-3 py-1.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-xs text-gray-400 hover:text-white transition-colors">
+                  <button
+                    onClick={() => {
+                      const q = messageInput.trim();
+                      if (q) {
+                        handleSend(`Web search: ${q}`);
+                      } else {
+                        setMessageInput('Search the web for ');
+                      }
+                    }}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-xs text-gray-400 hover:text-white hover:border-indigo-500/50 transition-colors active:scale-95"
+                  >
                     <Globe className="w-3.5 h-3.5" />
                     <span>Search Web</span>
                   </button>

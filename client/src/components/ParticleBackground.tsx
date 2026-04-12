@@ -36,7 +36,7 @@ export default function ParticleBackground() {
         this.baseX = this.x;
         this.baseY = this.y;
         this.density = (Math.random() * 30) + 1;
-        this.color = `rgba(99, 102, 241, ${Math.random() * 0.4 + 0.1})`;
+        this.color = `rgba(255, 255, 255, ${Math.random() * 0.4 + 0.1})`;
         this.vx = Math.random() * 0.5 - 0.25;
         this.vy = Math.random() * 0.5 - 0.25;
       }
@@ -46,7 +46,7 @@ export default function ParticleBackground() {
         ctx!.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx!.fillStyle = this.color;
         ctx!.shadowBlur = 5;
-        ctx!.shadowColor = 'rgba(99, 102, 241, 0.5)';
+        ctx!.shadowColor = 'rgba(255, 255, 255, 0.5)';
         ctx!.fill();
       }
 
@@ -94,7 +94,7 @@ export default function ParticleBackground() {
           if (dist < connectionDistance) {
             const opacity = (1 - dist / connectionDistance) * 0.15;
             ctx!.beginPath();
-            ctx!.strokeStyle = `rgba(99, 102, 241, ${opacity})`;
+            ctx!.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
             ctx!.lineWidth = 0.6;
             ctx!.moveTo(particles[i].x, particles[i].y);
             ctx!.lineTo(particles[j].x, particles[j].y);

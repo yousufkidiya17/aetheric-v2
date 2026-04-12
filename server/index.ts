@@ -170,14 +170,145 @@ function workersHandler(tool: string, params: any) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// MCP: WEATHER (Open-Meteo — 100% Free, No API Key)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+async function weatherHandler(tool: string, params: any) {
+  switch (tool) {
+    case "get_weather": {
+      const city = params.city || params.location || "Delhi";
+      try {
+        // Step 1: Geocode city name to lat/lon
+        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`);
+        const geoData = await geoRes.json() as any;
+        if (!geoData.results || geoData.results.length === 0) return { success: false, error: `City "${city}" not found` };
+        const { latitude, longitude, name, country } = geoData.results[0];
+
+        // Step 2: Get weather
+        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=auto&forecast_days=3`);
+        const weather = await weatherRes.json() as any;
+
+        const weatherCodes: Record<number, string> = { 0: "☀️ Clear sky", 1: "🌤️ Mainly clear", 2: "⛅ Partly cloudy", 3: "☁️ Overcast", 45: "🌫️ Foggy", 51: "🌦️ Light drizzle", 61: "🌧️ Rain", 63: "🌧️ Moderate rain", 65: "🌧️ Heavy rain", 71: "❄️ Snow", 80: "🌦️ Rain showers", 95: "⛈️ Thunderstorm" };
+        const codeDesc = (code: number) => weatherCodes[code] || `🌡️ Code ${code}`;
+
+        return {
+          success: true,
+          location: `${name}, ${country}`,
+          current: {
+            temperature: `${weather.current.temperature_2m}°C`,
+            humidity: `${weather.current.relative_humidity_2m}%`,
+            windSpeed: `${weather.current.wind_speed_10m} km/h`,
+            condition: codeDesc(weather.current.weather_code)
+          },
+          forecast: weather.daily.time.map((date: string, i: number) => ({
+            date, high: `${weather.daily.temperature_2m_max[i]}°C`, low: `${weather.daily.temperature_2m_min[i]}°C`, condition: codeDesc(weather.daily.weather_code[i])
+          }))
+        };
+      } catch (e: any) {
+        return { success: false, error: `Weather fetch failed: ${e.message}` };
+      }
+    }
+    default: return { success: false, error: `Unknown weather tool: ${tool}` };
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MCP: WEB SEARCH (DuckDuckGo Instant Answer — Free, No API Key)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+async function searchHandler(tool: string, params: any) {
+  switch (tool) {
+    case "web_search": {
+      const query = params.query || params.q || "";
+      if (!query) return { success: false, error: "Search query is required" };
+      try {
+        const res = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`);
+        const data = await res.json() as any;
+
+        const results: any[] = [];
+
+        // Abstract (main answer)
+        if (data.Abstract) {
+          results.push({ type: "answer", title: data.Heading || query, text: data.Abstract, source: data.AbstractSource, url: data.AbstractURL });
+        }
+
+        // Related topics
+        if (data.RelatedTopics && data.RelatedTopics.length > 0) {
+          data.RelatedTopics.slice(0, 5).forEach((topic: any) => {
+            if (topic.Text) {
+              results.push({ type: "related", text: topic.Text, url: topic.FirstURL || "" });
+            }
+          });
+        }
+
+        // Infobox
+        if (data.Infobox && data.Infobox.content) {
+          const info: Record<string, string> = {};
+          data.Infobox.content.slice(0, 5).forEach((item: any) => { if (item.label && item.value) info[item.label] = String(item.value); });
+          if (Object.keys(info).length > 0) results.push({ type: "infobox", data: info });
+        }
+
+        if (results.length === 0) {
+          return { success: true, query, message: "No instant answer found, but the query was noted.", results: [{ type: "tip", text: `Try searching "${query}" on Google for more results.` }] };
+        }
+
+        return { success: true, query, resultCount: results.length, results };
+      } catch (e: any) {
+        return { success: false, error: `Search failed: ${e.message}` };
+      }
+    }
+    default: return { success: false, error: `Unknown search tool: ${tool}` };
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MCP: WIKIPEDIA (Free, No API Key)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+async function wikiHandler(tool: string, params: any) {
+  switch (tool) {
+    case "wiki_search": {
+      const query = params.query || params.topic || "";
+      if (!query) return { success: false, error: "Topic is required" };
+      try {
+        const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`);
+        if (!res.ok) {
+          // Try search instead
+          const searchRes = await fetch(`https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(query)}&limit=5&format=json`);
+          const searchData = await searchRes.json() as any;
+          if (searchData[1] && searchData[1].length > 0) {
+            return { success: true, query, type: "suggestions", message: "Exact article not found. Did you mean:", suggestions: searchData[1], urls: searchData[3] };
+          }
+          return { success: false, error: `No Wikipedia article found for "${query}"` };
+        }
+        const data = await res.json() as any;
+        return {
+          success: true, query,
+          title: data.title,
+          summary: data.extract,
+          url: data.content_urls?.desktop?.page || `https://en.wikipedia.org/wiki/${encodeURIComponent(query)}`,
+          thumbnail: data.thumbnail?.source || null
+        };
+      } catch (e: any) {
+        return { success: false, error: `Wikipedia fetch failed: ${e.message}` };
+      }
+    }
+    default: return { success: false, error: `Unknown wiki tool: ${tool}` };
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // MCP ROUTER
 // ═══════════════════════════════════════════════════════════════════════════════
 
-function callMCP(intent: string, tool: string, params: any) {
+async function callMCP(intent: string, tool: string, params: any) {
   switch (intent) {
     case "food": return foodHandler(tool, params);
     case "rides": return ridesHandler(tool, params);
     case "workers": return workersHandler(tool, params);
+    case "weather": return weatherHandler(tool, params);
+    case "search": return searchHandler(tool, params);
+    case "wiki": return wikiHandler(tool, params);
     default: return { success: false, error: `Unknown service: ${intent}` };
   }
 }
@@ -192,6 +323,9 @@ const SYSTEM_PROMPT = `You are Aetheric, a premium AI assistant for an Indian se
 1. **Order Food** — Search restaurants, browse menus, place orders
 2. **Book Rides** — Estimate fares, book cabs/autos/bikes
 3. **Hire Workers** — Find electricians, plumbers, tutors, carpenters
+4. **Check Weather** — Get live weather for any city worldwide
+5. **Web Search** — Search the internet for any information
+6. **Wikipedia** — Look up facts, people, places, topics
 
 LANGUAGE & STYLE RULES (VERY IMPORTANT):
 - **Mirror the user's language exactly.** If they speak Hinglish (Hindi+English mix), reply in Hinglish. If pure Hindi, reply in Hindi. If English, reply in English. Match their exact tone, slang, and vibe.
@@ -204,7 +338,7 @@ LANGUAGE & STYLE RULES (VERY IMPORTANT):
 RESPONSE FORMAT (always return valid JSON):
 {
   "reply": "Your conversational response in the user's language style",
-  "intent": "food" | "rides" | "workers" | "general" | "clarify",
+  "intent": "food" | "rides" | "workers" | "weather" | "search" | "wiki" | "general" | "clarify",
   "action": { "tool": "the MCP tool to call", "params": { "key": "value" } },
   "suggestions": ["suggestion 1", "suggestion 2"]
 }
@@ -213,6 +347,9 @@ TOOL MAPPING:
 - Food: search_restaurants, get_menu, place_order, get_recommendations
 - Rides: estimate_ride, book_ride, get_ride_types
 - Workers: search_workers, book_worker, get_skills_list
+- Weather: get_weather (params: { "city": "city name" })
+- Search: web_search (params: { "query": "search query" })
+- Wiki: wiki_search (params: { "query": "topic name" })
 `;
 
 async function callMistral(messages: { role: string; content: string }[]) {
@@ -232,7 +369,10 @@ function getFallbackResponse(message: string) {
   if (msg.includes("food") || msg.includes("hungry") || msg.includes("bhook") || msg.includes("khana")) return { reply: "Bhai bhook lagi hai? 🍕 Bata kya khayega, abhi best restaurants dhundh ke deta hoon!", intent: "food", suggestions: ["Nearby restaurants dikhao", "Pizza manga do"] };
   if (msg.includes("ride") || msg.includes("cab") || msg.includes("gaadi") || msg.includes("auto")) return { reply: "Chal bhai, ride book karte hain! 🚕 Kahan jaana hai bata?", intent: "rides", suggestions: ["Airport jaana hai", "Auto book karo"] };
   if (msg.includes("plumber") || msg.includes("worker") || msg.includes("electrician") || msg.includes("kaam")) return { reply: "Sahi hai bhai! 🔧 Kaunsa kaam karwana hai? Plumber, electrician, carpenter — sab milega!", intent: "workers", suggestions: ["Plumber chahiye", "Electrician dhundho"] };
-  return { reply: "Hey bhai! Main hoon Aetheric 🌟 Tera apna AI assistant! Food order karna ho, ride book karni ho, ya koi worker chahiye — bas bol de!", intent: "general", suggestions: ["Bhook lagi hai", "Ride book karo", "Plumber chahiye"] };
+  if (msg.includes("weather") || msg.includes("mausam") || msg.includes("barish") || msg.includes("garmi") || msg.includes("thand")) return { reply: "Bata bhai kaunse city ka mausam dekhna hai? ☁️", intent: "weather", suggestions: ["Delhi ka weather", "Mumbai mausam"] };
+  if (msg.includes("search") || msg.includes("google") || msg.includes("dhundh") || msg.includes("find")) return { reply: "Bol bhai kya search karna hai? 🔍", intent: "search", suggestions: ["Latest news", "Cricket score"] };
+  if (msg.includes("wiki") || msg.includes("kaun hai") || msg.includes("kya hai") || msg.includes("who is") || msg.includes("what is")) return { reply: "Bata kya jaanna hai? Wikipedia se dhundhta hoon! 📚", intent: "wiki", suggestions: ["Elon Musk kaun hai", "AI kya hai"] };
+  return { reply: "Hey bhai! Main hoon Aetheric 🌟 Tera apna AI assistant! Food order, ride book, worker hire, weather check, web search, Wikipedia — sab kuch bol de!", intent: "general", suggestions: ["Bhook lagi hai", "Delhi ka mausam", "Web search karo"] };
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -269,7 +409,7 @@ async function startServer() {
 
       if (aiResponse.action?.tool && aiResponse.intent !== "general" && aiResponse.intent !== "clarify") {
         try {
-          mcpResult = callMCP(aiResponse.intent, aiResponse.action.tool, aiResponse.action.params || {});
+          mcpResult = await callMCP(aiResponse.intent, aiResponse.action.tool, aiResponse.action.params || {});
           console.log(`[Chat] MCP Result:`, JSON.stringify(mcpResult).slice(0, 200));
 
           const followUp = [...recentMessages, { role: "assistant", content: JSON.stringify(aiResponse) }, { role: "user", content: `Results: ${JSON.stringify(mcpResult)}. Friendly reply:` }];

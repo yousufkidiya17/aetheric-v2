@@ -122,7 +122,10 @@ const AethericDashboard = () => {
   const featureCards = [
     { title: '🍕 Order Food', description: 'Search restaurants & order meals', prompt: 'I want to order food. Show me nearby restaurants.' },
     { title: '🚕 Book Rides', description: 'Get cabs, autos & bikes instantly', prompt: 'I need a ride. Show me available ride options.' },
-    { title: '👷 Hire Workers', description: 'Find plumbers, electricians & more', prompt: 'I need to hire a worker. Show me available professionals.' }
+    { title: '👷 Hire Workers', description: 'Find plumbers, electricians & more', prompt: 'I need to hire a worker. Show me available professionals.' },
+    { title: '🌤️ Weather', description: 'Live weather for any city', prompt: 'Delhi ka aaj ka mausam bata do' },
+    { title: '🔍 Web Search', description: 'Search anything on the internet', prompt: 'Search the web for latest AI news' },
+    { title: '📚 Wikipedia', description: 'Look up facts, people & places', prompt: 'Tell me about Elon Musk from Wikipedia' },
   ];
 
   // --- Sidebar Content (reused for both desktop & mobile) ---
@@ -311,7 +314,7 @@ const AethericDashboard = () => {
 
           {/* Feature Cards — clickable instant prompts */}
           {messages.length === 0 && (
-            <div className="w-full max-w-3xl grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="w-full max-w-3xl grid grid-cols-2 md:grid-cols-3 gap-3">
               {featureCards.map((card, i) => (
                 <button
                   key={i}

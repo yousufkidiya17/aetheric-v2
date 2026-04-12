@@ -37,7 +37,7 @@ export default function BecomeWorker() {
       <div className="min-h-screen bg-[#0e0e0e] text-white flex items-center justify-center px-6">
         <div className="text-center">
           <div className="text-6xl mb-6">🎉</div>
-          <h1 className="text-3xl font-bold mb-3">Welcome to Aetheric!</h1>
+          <h1 className="text-3xl font-bold mb-3">Welcome to Aetherix!</h1>
           <p className="text-gray-400 mb-8">Your application has been submitted successfully.</p>
           <button onClick={() => setLocation('/')} className="px-8 py-3 rounded-xl bg-white hover:bg-white/80 text-black font-bold transition-all">
             Back to Home
@@ -56,7 +56,7 @@ export default function BecomeWorker() {
             <button onClick={() => setLocation('/')} className="text-gray-400 hover:text-white transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <h1 className="text-xl font-bold tracking-tighter">Aetheric</h1>
+            <h1 className="text-xl font-bold tracking-tighter">Aetherix</h1>
           </div>
           <div className="w-8 h-8 rounded-full bg-[#252626] flex items-center justify-center border border-[#484848]/30">
             <Users className="w-4 h-4 text-gray-400" />
@@ -72,7 +72,7 @@ export default function BecomeWorker() {
         <div className="w-full max-w-xl z-10">
           {/* Title */}
           <div className="mb-10 text-center md:text-left">
-            <span className="text-[0.6875rem] font-bold uppercase tracking-[0.2em] text-white/60 mb-3 block">Aetheric Network</span>
+            <span className="text-[0.6875rem] font-bold uppercase tracking-[0.2em] text-white/60 mb-3 block">Aetherix Network</span>
             <h2 className="text-4xl md:text-5xl font-extrabold tracking-tighter mb-4 leading-tight">
               Start your journey <br/><span className="text-gray-500">as a Partner.</span>
             </h2>
@@ -157,7 +157,7 @@ export default function BecomeWorker() {
                   {submitting ? 'Submitting...' : 'Submit Application'}
                 </button>
                 <p className="text-center text-[0.6875rem] text-gray-600 mt-6 uppercase tracking-wider">
-                  By clicking submit, you agree to Aetheric Partner Terms.
+                  By clicking submit, you agree to Aetherix Partner Terms.
                 </p>
               </div>
             </form>

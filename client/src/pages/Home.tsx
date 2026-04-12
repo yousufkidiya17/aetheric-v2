@@ -211,7 +211,7 @@ const AethericDashboard = () => {
       <div className="px-5 py-5 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <AethericLogo className="w-9 h-9" />
-          <span className="text-xl font-semibold tracking-tight">Aetheric</span>
+          <span className="text-xl font-semibold tracking-tight">Aetherix</span>
         </div>
         {/* Close button on mobile */}
         <button onClick={() => setSidebarOpen(false)} className="md:hidden text-gray-400 hover:text-white">
@@ -264,7 +264,7 @@ const AethericDashboard = () => {
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center text-xs font-bold text-white border border-white/20">AI</div>
           <div className="flex flex-col">
-            <span className="text-sm font-medium">Aetheric User</span>
+            <span className="text-sm font-medium">Aetherix User</span>
             <span className="text-xs text-gray-500">Free Plan</span>
           </div>
         </div>
@@ -326,7 +326,7 @@ const AethericDashboard = () => {
             </button>
             <button className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-sm font-medium text-gray-300">
               <AethericLogo className="w-5 h-5 flex-shrink-0" />
-              <span>Aetheric AI</span>
+              <span>Aetherix AI</span>
               <ChevronDown className="w-4 h-4 text-gray-500" />
             </button>
           </div>
@@ -342,7 +342,7 @@ const AethericDashboard = () => {
                 <HolographicSphere />
               </div>
               <div className="text-center mb-10">
-                <h1 className="text-3xl font-medium text-white mb-2">Welcome to Aetheric AI</h1>
+                <h1 className="text-3xl font-medium text-white mb-2">Welcome to Aetherix AI</h1>
                 <p className="text-xl font-normal text-gray-400">How can I help you today?</p>
               </div>
             </>
@@ -353,7 +353,7 @@ const AethericDashboard = () => {
                   {m.content}
                 </div>
               ))}
-              {isLoading && <div className="text-gray-500 self-start p-4 animate-pulse">Aetheric is thinking...</div>}
+              {isLoading && <div className="text-gray-500 self-start p-4 animate-pulse">Aetherix is thinking...</div>}
               <div ref={chatEndRef} />
             </div>
           )}

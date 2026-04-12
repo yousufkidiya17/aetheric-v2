@@ -327,7 +327,7 @@ async function callMCP(intent: string, tool: string, params: any) {
 
 const conversations = new Map<string, { role: string; content: string }[]>();
 
-const SYSTEM_PROMPT = `You are Aetheric, a premium AI assistant for an Indian service marketplace. You help users:
+const SYSTEM_PROMPT = `You are Aetherix, a premium AI assistant for an Indian service marketplace. You help users:
 1. **Order Food** — Search restaurants, browse menus, place orders
 2. **Book Rides** — Estimate fares, book cabs/autos/bikes
 3. **Hire Workers** — Find electricians, plumbers, tutors, carpenters
@@ -404,7 +404,7 @@ function getFallbackResponse(message: string) {
     const topic = msg.replace(/^(wiki|wikipedia)[:\s]*/i, "").replace(/(kaun|kya|who|what)\s+(hai|is)\s*/i, "").trim() || "Artificial Intelligence";
     return { reply: `"${topic}" ke baare me Wikipedia se dhundhta hoon! 📚`, intent: "wiki", action: { tool: "wiki_search", params: { query: topic } }, suggestions: ["Elon Musk kaun hai", "AI kya hai"] };
   }
-  return { reply: "Hey bhai! Main hoon Aetheric 🌟 Tera apna AI assistant! Food order, ride book, worker hire, weather check, web search, Wikipedia — sab kuch bol de!", intent: "general", suggestions: ["Bhook lagi hai", "Delhi ka mausam", "Web search karo"] };
+  return { reply: "Hey bhai! Main hoon Aetherix 🌟 Tera apna AI assistant! Food order, ride book, worker hire, weather check, web search, Wikipedia — sab kuch bol de!", intent: "general", suggestions: ["Bhook lagi hai", "Delhi ka mausam", "Web search karo"] };
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -498,7 +498,7 @@ async function startServer() {
     const workerId = `wrk_custom_${uuid()}`;
     const newWorker = { id: workerId, name, skills, experience: experience || "Not specified", hourlyRate: hourlyRate || 0, phone: phone || "", location: location || "Not specified", rating: 0, verified: false, availability: true, photo: "👷" };
     mockWorkers.push(newWorker);
-    res.json({ success: true, message: `Welcome to Aetheric, ${name}!`, worker: newWorker });
+    res.json({ success: true, message: `Welcome to Aetherix, ${name}!`, worker: newWorker });
   });
 
   // ━━━ Health Check ━━━
@@ -514,7 +514,7 @@ async function startServer() {
   const port = process.env.PORT || 3000;
   server.listen(port, () => {
     console.log(`\n${"═".repeat(56)}`);
-    console.log(`  🌟 AETHERIC V2 — AI Service Marketplace`);
+    console.log(`  🌟 AETHERIX V2 — AI Service Marketplace`);
     console.log(`${"═".repeat(56)}`);
     console.log(`  📡 Server:      http://localhost:${port}`);
     console.log(`  🤖 Model:       ${CONFIG.MISTRAL_MODEL}`);

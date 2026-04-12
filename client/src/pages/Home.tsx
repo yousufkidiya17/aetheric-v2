@@ -70,7 +70,7 @@ const AethericDashboard = () => {
   const [, setLocation] = useLocation();
   const [activeNav, setActiveNav] = useState('Home');
   const [messageInput, setMessageInput] = useState('');
-  const [messages, setMessages] = useState<{role: string; content: string}[]>([]);
+  const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -148,9 +148,8 @@ const AethericDashboard = () => {
             <li key={item.name}>
               <button
                 onClick={() => { setActiveNav(item.name); setSidebarOpen(false); }}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                  activeNav === item.name ? 'bg-[#1a1a1a] text-white' : 'text-gray-400 hover:text-gray-200 hover:bg-[#151515]'
-                }`}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${activeNav === item.name ? 'bg-[#1a1a1a] text-white' : 'text-gray-400 hover:text-gray-200 hover:bg-[#151515]'
+                  }`}
               >
                 <item.icon className="w-4 h-4" />
                 <span>{item.name}</span>
@@ -164,7 +163,7 @@ const AethericDashboard = () => {
       <div className="px-3 mb-4">
         <button
           onClick={() => { setLocation('/become-worker'); setSidebarOpen(false); }}
-          className="w-full flex items-center gap-3 px-3 py-3 rounded-xl bg-gradient-to-r from-indigo-600/20 to-purple-600/20 border border-indigo-500/30 text-sm font-medium text-indigo-300 hover:from-indigo-600/30 hover:to-purple-600/30 transition-all"
+          className="w-full flex items-center gap-3 px-3 py-3 rounded-xl bg-white/5 border border-white/15 text-sm font-medium text-white/70 hover:bg-white/10 hover:border-white/30 hover:text-white transition-all"
         >
           <Users className="w-4 h-4" />
           <span>Become a Worker</span>
@@ -186,7 +185,7 @@ const AethericDashboard = () => {
 
       <div className="p-4 border-t border-[#1a1a1a]">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-xs font-bold">AI</div>
+          <div className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center text-xs font-bold text-white border border-white/20">AI</div>
           <div className="flex flex-col">
             <span className="text-sm font-medium">Aetheric User</span>
             <span className="text-xs text-gray-500">Free Plan</span>
@@ -303,7 +302,7 @@ const AethericDashboard = () => {
                         setMessageInput('Search the web for ');
                       }
                     }}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-xs text-gray-400 hover:text-white hover:border-indigo-500/50 transition-colors active:scale-95"
+                    className="flex items-center gap-2 px-3 py-1.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-xs text-gray-400 hover:text-white hover:border-white/30 transition-colors active:scale-95"
                   >
                     <Globe className="w-3.5 h-3.5" />
                     <span>Search Web</span>
@@ -314,7 +313,7 @@ const AethericDashboard = () => {
                   <button
                     onClick={() => handleSend()}
                     disabled={!messageInput.trim() || isLoading}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                    className="w-8 h-8 flex items-center justify-center rounded-lg bg-white hover:bg-white/80 text-black disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95"
                   >
                     <Send className="w-4 h-4" />
                   </button>
@@ -330,7 +329,7 @@ const AethericDashboard = () => {
                 <button
                   key={i}
                   onClick={() => handleSend(card.prompt)}
-                  className="bg-[#111111] border border-[#2a2a2a] rounded-xl p-4 hover:border-indigo-500/50 transition-all cursor-pointer hover:scale-[1.02] text-left"
+                  className="bg-[#111111] border border-[#2a2a2a] rounded-xl p-4 hover:border-white/20 hover:bg-white/5 transition-all cursor-pointer hover:scale-[1.02] text-left"
                 >
                   <h3 className="text-sm font-medium text-gray-200 mb-1">{card.title}</h3>
                   <p className="text-xs text-gray-500">{card.description}</p>

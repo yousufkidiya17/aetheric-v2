@@ -39,7 +39,7 @@ export default function BecomeWorker() {
           <div className="text-6xl mb-6">🎉</div>
           <h1 className="text-3xl font-bold mb-3">Welcome to Aetheric!</h1>
           <p className="text-gray-400 mb-8">Your application has been submitted successfully.</p>
-          <button onClick={() => setLocation('/')} className="px-8 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-400 font-bold transition-all">
+          <button onClick={() => setLocation('/')} className="px-8 py-3 rounded-xl bg-white hover:bg-white/80 text-black font-bold transition-all">
             Back to Home
           </button>
         </div>
@@ -66,13 +66,13 @@ export default function BecomeWorker() {
 
       <main className="flex-1 flex flex-col items-center justify-center px-6 pt-24 pb-12 relative overflow-hidden">
         {/* Background Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-pink-500/5 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/3 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-white/3 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="w-full max-w-xl z-10">
           {/* Title */}
           <div className="mb-10 text-center md:text-left">
-            <span className="text-[0.6875rem] font-bold uppercase tracking-[0.2em] text-purple-400 mb-3 block">Aetheric Network</span>
+            <span className="text-[0.6875rem] font-bold uppercase tracking-[0.2em] text-white/60 mb-3 block">Aetheric Network</span>
             <h2 className="text-4xl md:text-5xl font-extrabold tracking-tighter mb-4 leading-tight">
               Start your journey <br/><span className="text-gray-500">as a Partner.</span>
             </h2>
@@ -89,7 +89,7 @@ export default function BecomeWorker() {
                 <label className="text-[0.6875rem] font-bold uppercase tracking-widest text-gray-500 ml-1">Full Name</label>
                 <input
                   value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})}
-                  className="w-full bg-black border border-[#484848] rounded-xl py-4 px-5 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 transition-all placeholder:text-gray-700"
+                  className="w-full bg-black border border-[#484848] rounded-xl py-4 px-5 text-white focus:outline-none focus:ring-1 focus:ring-white/40 transition-all placeholder:text-gray-700"
                   placeholder="Enter your full name" type="text" required
                 />
               </div>
@@ -100,7 +100,7 @@ export default function BecomeWorker() {
                   <label className="text-[0.6875rem] font-bold uppercase tracking-widest text-gray-500 ml-1">Phone Number</label>
                   <input
                     value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})}
-                    className="w-full bg-black border border-[#484848] rounded-xl py-4 px-5 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 transition-all placeholder:text-gray-700"
+                    className="w-full bg-black border border-[#484848] rounded-xl py-4 px-5 text-white focus:outline-none focus:ring-1 focus:ring-white/40 transition-all placeholder:text-gray-700"
                     placeholder="+91 XXXX XXXX" type="tel" required
                   />
                 </div>
@@ -109,7 +109,7 @@ export default function BecomeWorker() {
                   <label className="text-[0.6875rem] font-bold uppercase tracking-widest text-gray-500 ml-1">City</label>
                   <input
                     value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})}
-                    className="w-full bg-black border border-[#484848] rounded-xl py-4 px-5 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 transition-all placeholder:text-gray-700"
+                    className="w-full bg-black border border-[#484848] rounded-xl py-4 px-5 text-white focus:outline-none focus:ring-1 focus:ring-white/40 transition-all placeholder:text-gray-700"
                     placeholder="e.g. Mumbai" type="text" required
                   />
                 </div>
@@ -120,7 +120,7 @@ export default function BecomeWorker() {
                 <label className="text-[0.6875rem] font-bold uppercase tracking-widest text-gray-500 ml-1">Service Type</label>
                 <select
                   value={formData.service} onChange={e => setFormData({...formData, service: e.target.value})}
-                  className="w-full bg-black border border-[#484848] rounded-xl py-4 px-5 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 transition-all appearance-none cursor-pointer"
+                  className="w-full bg-black border border-[#484848] rounded-xl py-4 px-5 text-white focus:outline-none focus:ring-1 focus:ring-white/40 transition-all appearance-none cursor-pointer"
                   required
                 >
                   <option disabled value="">Select your expertise</option>
@@ -141,7 +141,7 @@ export default function BecomeWorker() {
                   <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
                   <input
                     value={formData.hourlyRate} onChange={e => setFormData({...formData, hourlyRate: e.target.value})}
-                    className="w-full bg-black border border-[#484848] rounded-xl py-4 pl-10 pr-16 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 transition-all placeholder:text-gray-700"
+                    className="w-full bg-black border border-[#484848] rounded-xl py-4 pl-10 pr-16 text-white focus:outline-none focus:ring-1 focus:ring-white/40 transition-all placeholder:text-gray-700"
                     placeholder="0" type="number" required
                   />
                   <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[0.6875rem] font-bold text-gray-500">INR / HR</span>
@@ -152,7 +152,7 @@ export default function BecomeWorker() {
               <div className="pt-4">
                 <button
                   type="submit" disabled={submitting}
-                  className="w-full py-5 rounded-xl bg-gradient-to-r from-purple-500 via-indigo-400 to-purple-500 bg-[length:200%_auto] text-black font-bold text-sm tracking-widest uppercase active:scale-95 transition-all duration-300 hover:shadow-[0_0_30px_-5px_rgba(164,152,187,0.4)] disabled:opacity-50"
+                  className="w-full py-5 rounded-xl bg-white hover:bg-white/90 text-black font-bold text-sm tracking-widest uppercase active:scale-95 transition-all duration-300 hover:shadow-[0_0_30px_-5px_rgba(255,255,255,0.2)] disabled:opacity-50"
                 >
                   {submitting ? 'Submitting...' : 'Submit Application'}
                 </button>
@@ -166,14 +166,14 @@ export default function BecomeWorker() {
           {/* Info Cards */}
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-[#131313] p-6 rounded-2xl border border-[#484848]/15 flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center flex-shrink-0 text-xl">🛡️</div>
+              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 text-xl">🛡️</div>
               <div>
                 <h4 className="font-bold text-sm mb-1">Global Verification</h4>
                 <p className="text-xs text-gray-500 leading-relaxed">Identity checks and professional certifications processed in 24h.</p>
               </div>
             </div>
             <div className="bg-[#131313] p-6 rounded-2xl border border-[#484848]/15 flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-pink-500/10 flex items-center justify-center flex-shrink-0 text-xl">💰</div>
+              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 text-xl">💰</div>
               <div>
                 <h4 className="font-bold text-sm mb-1">Instant Payouts</h4>
                 <p className="text-xs text-gray-500 leading-relaxed">Withdraw your earnings directly to your preferred wallet daily.</p>

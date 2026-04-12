@@ -350,6 +350,18 @@ TOOL MAPPING:
 - Weather: get_weather (params: { "city": "city name" })
 - Search: web_search (params: { "query": "search query" })
 - Wiki: wiki_search (params: { "query": "topic name" })
+
+EXAMPLES (follow these patterns):
+User: "Delhi ka mausam bata" → intent: "weather", action: { tool: "get_weather", params: { city: "Delhi" } }
+User: "Mumbai weather" → intent: "weather", action: { tool: "get_weather", params: { city: "Mumbai" } }
+User: "Search latest cricket news" → intent: "search", action: { tool: "web_search", params: { query: "latest cricket news" } }
+User: "Web search: AI news" → intent: "search", action: { tool: "web_search", params: { query: "AI news" } }
+User: "Elon Musk kaun hai" → intent: "wiki", action: { tool: "wiki_search", params: { query: "Elon Musk" } }
+User: "Tell me about Python programming" → intent: "wiki", action: { tool: "wiki_search", params: { query: "Python programming language" } }
+User: "Restaurants dikhao" → intent: "food", action: { tool: "search_restaurants", params: {} }
+User: "Ride book karo airport" → intent: "rides", action: { tool: "estimate_ride", params: { pickup: "current location", destination: "airport" } }
+
+IMPORTANT: When the user mentions weather/mausam/temperature, ALWAYS use intent "weather". When they say search/google/find info, ALWAYS use intent "search". When they ask about a person/place/topic/who/what, ALWAYS use intent "wiki".
 `;
 
 async function callMistral(messages: { role: string; content: string }[]) {
@@ -366,12 +378,22 @@ async function callMistral(messages: { role: string; content: string }[]) {
 
 function getFallbackResponse(message: string) {
   const msg = message.toLowerCase();
-  if (msg.includes("food") || msg.includes("hungry") || msg.includes("bhook") || msg.includes("khana")) return { reply: "Bhai bhook lagi hai? 🍕 Bata kya khayega, abhi best restaurants dhundh ke deta hoon!", intent: "food", suggestions: ["Nearby restaurants dikhao", "Pizza manga do"] };
-  if (msg.includes("ride") || msg.includes("cab") || msg.includes("gaadi") || msg.includes("auto")) return { reply: "Chal bhai, ride book karte hain! 🚕 Kahan jaana hai bata?", intent: "rides", suggestions: ["Airport jaana hai", "Auto book karo"] };
-  if (msg.includes("plumber") || msg.includes("worker") || msg.includes("electrician") || msg.includes("kaam")) return { reply: "Sahi hai bhai! 🔧 Kaunsa kaam karwana hai? Plumber, electrician, carpenter — sab milega!", intent: "workers", suggestions: ["Plumber chahiye", "Electrician dhundho"] };
-  if (msg.includes("weather") || msg.includes("mausam") || msg.includes("barish") || msg.includes("garmi") || msg.includes("thand")) return { reply: "Bata bhai kaunse city ka mausam dekhna hai? ☁️", intent: "weather", suggestions: ["Delhi ka weather", "Mumbai mausam"] };
-  if (msg.includes("search") || msg.includes("google") || msg.includes("dhundh") || msg.includes("find")) return { reply: "Bol bhai kya search karna hai? 🔍", intent: "search", suggestions: ["Latest news", "Cricket score"] };
-  if (msg.includes("wiki") || msg.includes("kaun hai") || msg.includes("kya hai") || msg.includes("who is") || msg.includes("what is")) return { reply: "Bata kya jaanna hai? Wikipedia se dhundhta hoon! 📚", intent: "wiki", suggestions: ["Elon Musk kaun hai", "AI kya hai"] };
+  if (msg.includes("food") || msg.includes("hungry") || msg.includes("bhook") || msg.includes("khana")) return { reply: "Bhai bhook lagi hai? 🍕 Bata kya khayega, abhi best restaurants dhundh ke deta hoon!", intent: "food", action: { tool: "search_restaurants", params: {} }, suggestions: ["Nearby restaurants dikhao", "Pizza manga do"] };
+  if (msg.includes("ride") || msg.includes("cab") || msg.includes("gaadi") || msg.includes("auto")) return { reply: "Chal bhai, ride book karte hain! 🚕 Kahan jaana hai bata?", intent: "rides", action: { tool: "get_ride_types", params: {} }, suggestions: ["Airport jaana hai", "Auto book karo"] };
+  if (msg.includes("plumber") || msg.includes("worker") || msg.includes("electrician") || msg.includes("kaam")) return { reply: "Sahi hai bhai! 🔧 Kaunsa kaam karwana hai? Plumber, electrician, carpenter — sab milega!", intent: "workers", action: { tool: "get_skills_list", params: {} }, suggestions: ["Plumber chahiye", "Electrician dhundho"] };
+  if (msg.includes("weather") || msg.includes("mausam") || msg.includes("barish") || msg.includes("garmi") || msg.includes("thand")) {
+    const cityMatch = msg.match(/(?:weather|mausam)\s+(?:in\s+|ka\s+|of\s+)?(\w+)/i);
+    const city = cityMatch ? cityMatch[1] : "Delhi";
+    return { reply: `${city} ka mausam dekhta hoon bhai! ☁️`, intent: "weather", action: { tool: "get_weather", params: { city } }, suggestions: ["Delhi ka weather", "Mumbai mausam"] };
+  }
+  if (msg.includes("search") || msg.includes("google") || msg.includes("dhundh") || msg.includes("find")) {
+    const query = msg.replace(/^(web\s+)?search[:\s]*/i, "").replace(/^(google|dhundh|find)[:\s]*/i, "").trim() || "latest news";
+    return { reply: `"${query}" search karta hoon bhai! 🔍`, intent: "search", action: { tool: "web_search", params: { query } }, suggestions: ["Latest news", "Cricket score"] };
+  }
+  if (msg.includes("wiki") || msg.includes("kaun hai") || msg.includes("kya hai") || msg.includes("who is") || msg.includes("what is")) {
+    const topic = msg.replace(/^(wiki|wikipedia)[:\s]*/i, "").replace(/(kaun|kya|who|what)\s+(hai|is)\s*/i, "").trim() || "Artificial Intelligence";
+    return { reply: `"${topic}" ke baare me Wikipedia se dhundhta hoon! 📚`, intent: "wiki", action: { tool: "wiki_search", params: { query: topic } }, suggestions: ["Elon Musk kaun hai", "AI kya hai"] };
+  }
   return { reply: "Hey bhai! Main hoon Aetheric 🌟 Tera apna AI assistant! Food order, ride book, worker hire, weather check, web search, Wikipedia — sab kuch bol de!", intent: "general", suggestions: ["Bhook lagi hai", "Delhi ka mausam", "Web search karo"] };
 }
 
@@ -386,6 +408,20 @@ async function startServer() {
 
   app.use(express.static(staticPath));
   app.use(express.json());
+
+  // ━━━ Direct Test Endpoints (for debugging MCP services) ━━━
+  app.get("/api/test/weather/:city", async (req, res) => {
+    try { res.json(await weatherHandler("get_weather", { city: req.params.city })); }
+    catch (e: any) { res.status(500).json({ error: e.message }); }
+  });
+  app.get("/api/test/search/:query", async (req, res) => {
+    try { res.json(await searchHandler("web_search", { query: req.params.query })); }
+    catch (e: any) { res.status(500).json({ error: e.message }); }
+  });
+  app.get("/api/test/wiki/:topic", async (req, res) => {
+    try { res.json(await wikiHandler("wiki_search", { query: req.params.topic })); }
+    catch (e: any) { res.status(500).json({ error: e.message }); }
+  });
 
   // ━━━ Main Chat API ━━━
   app.post("/api/chat", async (req, res) => {

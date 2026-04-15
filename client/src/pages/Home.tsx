@@ -8,7 +8,6 @@ import {
   MoreHorizontal,
   ChevronDown,
   Paperclip,
-  Globe,
   Mic,
   Send,
   Users,
@@ -154,35 +153,6 @@ const AethericDashboard = () => {
     }
   };
 
-  // --- Direct Web Search (bypasses Mistral) ---
-  const handleWebSearch = async (query: string) => {
-    if (!query || isLoading) return;
-    setMessageInput('');
-    setMessages(prev => [...prev, { role: 'user', content: `🔍 Web Search: ${query}` }]);
-    setIsLoading(true);
-    try {
-      const res = await fetch('/api/search', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query })
-      });
-      const data = await res.json();
-      if (data.success && data.results && data.results.length > 0) {
-        const formatted = data.results.map((r: any) =>
-          `**${r.title || ''}**\n${r.snippet || r.text || ''}${r.url ? `\n🔗 ${r.url}` : ''}`
-        ).join('\n\n---\n\n');
-        setMessages(prev => [...prev, { role: 'assistant', content: `🔍 Search results for "${query}":\n\n${formatted}` }]);
-      } else {
-        setMessages(prev => [...prev, { role: 'assistant', content: `"${query}" ke liye koi results nahi mile bhai. Kuch aur try kar! 🔍` }]);
-      }
-    } catch (e) {
-      console.error(e);
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Search failed bhai, connection issue lag raha hai. Try again!' }]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const navItems = [
     { name: 'Home', icon: HomeIcon },
     { name: 'Templates', icon: LayoutGrid },
@@ -200,9 +170,6 @@ const AethericDashboard = () => {
     { title: '🍕 Order Food', description: 'Search restaurants & order meals', prompt: 'I want to order food. Show me nearby restaurants.' },
     { title: '🚕 Book Rides', description: 'Get cabs, autos & bikes instantly', prompt: 'I need a ride. Show me available ride options.' },
     { title: '👷 Hire Workers', description: 'Find plumbers, electricians & more', prompt: 'I need to hire a worker. Show me available professionals.' },
-    { title: '🌤️ Weather', description: 'Live weather for any city', prompt: 'Delhi ka aaj ka mausam bata do' },
-    { title: '🔍 Web Search', description: 'Search anything on the internet', prompt: 'Search the web for latest AI news' },
-    { title: '📚 Wikipedia', description: 'Look up facts, people & places', prompt: 'Tell me about Elon Musk from Wikipedia' },
   ];
 
   // --- Sidebar Content (reused for both desktop & mobile) ---
@@ -377,23 +344,7 @@ const AethericDashboard = () => {
                   rows={1}
                 />
               </div>
-              <div className="flex items-center justify-between">
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => {
-                      const q = messageInput.trim();
-                      if (q) {
-                        handleWebSearch(q);
-                      } else {
-                        setMessageInput('');
-                      }
-                    }}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-xs text-gray-400 hover:text-white hover:border-white/30 transition-colors active:scale-95"
-                  >
-                    <Globe className="w-3.5 h-3.5" />
-                    <span>Search Web</span>
-                  </button>
-                </div>
+              <div className="flex items-center justify-end">
                 <div className="flex gap-3 items-center">
                   <button onClick={toggleVoice} className={`p-1 rounded-md transition-all ${isListening ? 'text-white animate-pulse bg-white/10' : 'text-gray-500 hover:text-white'}`}>
                     <Mic className="w-4 h-4" />
@@ -412,7 +363,7 @@ const AethericDashboard = () => {
 
           {/* Feature Cards — clickable instant prompts */}
           {messages.length === 0 && (
-            <div className="w-full max-w-3xl grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="w-full max-w-3xl grid grid-cols-1 md:grid-cols-3 gap-3">
               {featureCards.map((card, i) => (
                 <button
                   key={i}
